@@ -1,26 +1,40 @@
-# CakePHP Application Skeleton
+# 🍺 ChevecCalc
 
-[![Build Status](https://img.shields.io/travis/cakephp/app/master.svg?style=flat-square)](https://travis-ci.org/cakephp/app)
-[![License](https://img.shields.io/packagist/l/cakephp/app.svg?style=flat-square)](https://packagist.org/packages/cakephp/app)
+SPA para calcular el precio por mililitro de cerveza y comparar presentaciones (lata, botella, caguama, barril…) para saber cuál conviene más.
 
-A skeleton for creating applications with [CakePHP](http://cakephp.org) 3.x.
+## Stack
 
-The framework source code can be found here: [cakephp/cakephp](https://github.com/cakephp/cakephp).
+- [Vite](https://vitejs.dev/) + [React](https://react.dev/)
+- Sin backend: los datos se guardan en `localStorage`
 
-## Installation
+## Desarrollo
 
-1. Download [Composer](http://getcomposer.org/doc/00-intro.md) or update `composer self-update`.
-2. Run `php composer.phar create-project --prefer-dist cakephp/app [app_name]`.
-
-If Composer is installed globally, run
 ```bash
-composer create-project --prefer-dist cakephp/app [app_name]
+npm install
+npm run dev
 ```
 
-You should now be able to visit the path to where you installed the app and see
-the setup traffic lights.
+## Build
 
-## Configuration
+```bash
+npm run build   # genera dist/
+npm run preview # sirve el build localmente
+```
 
-Read and edit `config/app.php` and setup the 'Datasources' and any other
-configuration relevant for your application.
+## Deploy en Netlify
+
+El repo incluye `netlify.toml` con la configuración lista:
+
+- **Build command:** `npm run build`
+- **Publish directory:** `dist`
+- Redirect SPA (`/* → /index.html`)
+
+Solo conecta el repo en Netlify y listo.
+
+## Funcionalidad
+
+- Alta de cervezas con presentación, envases por paquete, ml por envase y precio (total o por envase)
+- Presets de volúmenes comunes (355, 473, 650 ml, etc.)
+- Cálculo en vivo de $/ml y $/L
+- Tabla comparativa ordenada por precio por litro, con la mejor opción destacada y el % de diferencia contra ella
+- Persistencia en el navegador
