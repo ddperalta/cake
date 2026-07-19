@@ -25,12 +25,24 @@ body {
 .app {
   max-width: 960px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 1rem 0.75rem 3rem;
+}
+
+@media (min-width: 820px) {
+  .app {
+    padding: 1.5rem 1rem 3rem;
+  }
 }
 
 header h1 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.6rem;
+}
+
+@media (min-width: 820px) {
+  header h1 {
+    font-size: 2rem;
+  }
 }
 
 header p {
@@ -51,11 +63,22 @@ main {
   }
 }
 
+/* Evita que la tabla ancha desborde la grid (min-width:auto por defecto) */
+main > * {
+  min-width: 0;
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 1.25rem;
+  padding: 1rem;
+}
+
+@media (min-width: 820px) {
+  .card {
+    padding: 1.25rem;
+  }
 }
 
 .card h2 {
@@ -165,7 +188,7 @@ button.primary:disabled {
 }
 
 button.ghost {
-  padding: 0.3rem 0.6rem;
+  padding: 0.45rem 0.7rem;
   font-size: 0.85rem;
   color: var(--muted);
   background: transparent;
@@ -293,7 +316,7 @@ button.ghost.danger:hover {
 }
 
 .toggle-btn {
-  padding: 0.3rem 0.6rem;
+  padding: 0.45rem 0.7rem;
   font-size: 0.8rem;
   color: var(--muted);
   background: transparent;
@@ -317,8 +340,93 @@ td a {
   text-decoration: none;
 }
 
+/* Móvil: tarjetas. Escritorio: tabla. */
 .table-scroll {
-  overflow-x: auto;
+  display: none;
+}
+
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 820px) {
+  .table-scroll {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .cards {
+    display: none;
+  }
+}
+
+.bcard {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+  background: var(--bg);
+}
+
+.bcard.best {
+  border-color: var(--green);
+  background: rgba(123, 201, 111, 0.07);
+}
+
+.bcard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.bcard-name {
+  font-weight: 600;
+}
+
+.bcard.best .bcard-name {
+  color: var(--green);
+}
+
+.bcard-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--amber);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.bcard-price small {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.bcard-sub {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.bcard-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.6rem;
+}
+
+.bcard-diff {
+  font-size: 0.85rem;
+  color: var(--red);
+}
+
+.bcard-diff.best {
+  color: var(--green);
+  font-weight: 600;
 }
 
 table {

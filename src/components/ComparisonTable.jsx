@@ -70,6 +70,72 @@ export default function ComparisonTable({ entries, onRemove, onClear }) {
         </div>
       </div>
 
+      <ul className="cards">
+        {rows.map((r) => {
+          const isBest = r.id === best.id && r[metric] != null;
+          const diff =
+            r[metric] == null ? null : ((r[metric] - best[metric]) / best[metric]) * 100;
+          return (
+            <li key={r.id} className={isBest ? 'bcard best' : 'bcard'}>
+              <div className="bcard-top">
+                <span className="bcard-name">
+                  {isBest && <span title="Mejor precio">🏆 </span>}
+                  {r.name}
+                </span>
+                <span className="bcard-price">
+                  {fmtMoney(r.perLiter)}
+                  <small>/L</small>
+                </span>
+              </div>
+              <div className="bcard-sub">
+                {containerLabel(r.container)} × {r.units} de {r.mlPerUnit} ml · {fmtMl(r.totalMl)}{' '}
+                · {fmtMoney(r.totalPrice)}
+              </div>
+              <div className="bcard-sub">
+                {fmtPerMl(r.perMl)}/ml
+                {r.perLiterAlcohol != null && <> · {fmtMoney(r.perLiterAlcohol)}/L de alcohol</>}
+                {r.store && (
+                  <>
+                    {' '}
+                    · {r.store}
+                    {r.location && (
+                      <>
+                        {' '}
+                        <a
+                          href={mapsUrl(r.location)}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Ver en Google Maps"
+                        >
+                          📍
+                        </a>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+              <div className="bcard-foot">
+                <span className={isBest ? 'bcard-diff best' : 'bcard-diff'}>
+                  {diff == null
+                    ? 'Sin % de alcohol'
+                    : isBest
+                      ? 'Mejor precio'
+                      : `+${diff.toFixed(1)}% vs. mejor`}
+                </span>
+                <button
+                  type="button"
+                  className="ghost danger"
+                  onClick={() => onRemove(r.id)}
+                  aria-label={`Eliminar ${r.name}`}
+                >
+                  ✕ Eliminar
+                </button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
       <div className="table-scroll">
         <table>
           <thead>
