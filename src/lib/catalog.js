@@ -1,20 +1,60 @@
-// Presentaciones comunes en México. Los ABV son aproximados y editables.
-export const CATALOG = [
-  { label: 'Corona cuartito (207 ml × 6)', name: 'Corona Extra cuartito', container: 'botella', ml: 207, units: 6, abv: 4.5 },
-  { label: 'Corona media (355 ml × 6)', name: 'Corona Extra media', container: 'botella', ml: 355, units: 6, abv: 4.5 },
-  { label: 'Corona Familiar caguama (940 ml)', name: 'Corona Familiar', container: 'caguama', ml: 940, units: 1, abv: 4.5 },
-  { label: 'Victoria media (355 ml × 6)', name: 'Victoria media', container: 'botella', ml: 355, units: 6, abv: 4 },
-  { label: 'Victoria caguama (940 ml)', name: 'Victoria caguama', container: 'caguama', ml: 940, units: 1, abv: 4 },
-  { label: 'Victoria mega (1.2 L)', name: 'Victoria mega', container: 'caguama', ml: 1200, units: 1, abv: 4 },
-  { label: 'Modelo Especial lata (355 ml × 6)', name: 'Modelo Especial lata', container: 'lata', ml: 355, units: 6, abv: 4.5 },
-  { label: 'Modelo Especial latón (473 ml)', name: 'Modelo Especial latón', container: 'lata-alta', ml: 473, units: 1, abv: 4.5 },
-  { label: 'Pacífico media (355 ml × 6)', name: 'Pacífico media', container: 'botella', ml: 355, units: 6, abv: 4.5 },
-  { label: 'Pacífico ballena (940 ml)', name: 'Pacífico ballena', container: 'caguama', ml: 940, units: 1, abv: 4.5 },
-  { label: 'Indio latón (473 ml × 6)', name: 'Indio latón', container: 'lata-alta', ml: 473, units: 6, abv: 4.1 },
-  { label: 'Indio caguama (940 ml)', name: 'Indio caguama', container: 'caguama', ml: 940, units: 1, abv: 4.1 },
-  { label: 'Tecate lata (355 ml × 6)', name: 'Tecate lata', container: 'lata', ml: 355, units: 6, abv: 4.5 },
-  { label: 'Tecate Light latón (473 ml)', name: 'Tecate Light latón', container: 'lata-alta', ml: 473, units: 1, abv: 3.9 },
-  { label: 'XX Lager lata (355 ml × 6)', name: 'XX Lager lata', container: 'lata', ml: 355, units: 6, abv: 4.2 },
-  { label: 'Heineken latón (473 ml)', name: 'Heineken latón', container: 'lata-alta', ml: 473, units: 1, abv: 5 },
-  { label: 'Bohemia Clara media (355 ml × 6)', name: 'Bohemia Clara', container: 'botella', ml: 355, units: 6, abv: 4.7 },
+// Catálogo de marcas comunes en México. Los ABV son aproximados y editables.
+
+export const PRESENTATIONS = {
+  ampolleta: { short: 'ampolleta', container: 'botella', ml: 190, units: 6 },
+  cuartito: { short: 'cuartito', container: 'botella', ml: 207, units: 6 },
+  barrilito: { short: 'barrilito', container: 'botella', ml: 325, units: 6 },
+  media: { short: 'media', container: 'botella', ml: 355, units: 6 },
+  botella355: { short: 'botella', container: 'botella', ml: 355, units: 6 },
+  lata355: { short: 'lata', container: 'lata', ml: 355, units: 6 },
+  laton473: { short: 'latón', container: 'lata-alta', ml: 473, units: 1 },
+  caguama940: { short: 'caguama', container: 'caguama', ml: 940, units: 1 },
+  mega1200: { short: 'mega', container: 'caguama', ml: 1200, units: 1 },
+};
+
+function brand(name, abv, keys, aliases = {}) {
+  return {
+    name,
+    abv,
+    presentations: keys.map((key) => {
+      const base = PRESENTATIONS[key];
+      return { key, ...base, short: aliases[key] ?? base.short };
+    }),
+  };
+}
+
+export const BRANDS = [
+  // Grupo Modelo
+  brand('Corona Extra', 4.5, ['ampolleta', 'cuartito', 'media', 'lata355', 'laton473', 'caguama940', 'mega1200']),
+  brand('Corona Light', 4.0, ['media', 'lata355', 'laton473']),
+  brand('Corona Familiar', 4.5, ['media', 'caguama940']),
+  brand('Victoria', 4.0, ['cuartito', 'media', 'lata355', 'laton473', 'caguama940', 'mega1200']),
+  brand('Modelo Especial', 4.5, ['media', 'lata355', 'laton473', 'caguama940', 'mega1200']),
+  brand('Negra Modelo', 5.3, ['media', 'lata355', 'laton473']),
+  brand('Pacífico', 4.5, ['cuartito', 'media', 'lata355', 'laton473', 'caguama940'], { caguama940: 'ballena' }),
+  brand('León', 4.5, ['media', 'caguama940']),
+  brand('Montejo', 4.5, ['media', 'lata355']),
+  brand('Estrella', 4.5, ['media', 'caguama940']),
+  brand('Barrilito', 3.6, ['barrilito']),
+  brand('Michelob Ultra', 4.2, ['botella355', 'lata355', 'laton473']),
+  // Heineken México (Cuauhtémoc Moctezuma)
+  brand('Tecate', 4.5, ['media', 'lata355', 'laton473', 'caguama940']),
+  brand('Tecate Light', 3.9, ['lata355', 'laton473', 'caguama940']),
+  brand('Indio', 4.1, ['media', 'lata355', 'laton473', 'caguama940']),
+  brand('Sol', 4.5, ['media', 'lata355', 'laton473', 'caguama940', 'mega1200']),
+  brand('Dos Equis Lager', 4.2, ['media', 'lata355', 'laton473', 'caguama940']),
+  brand('Dos Equis Ambar', 4.7, ['media', 'lata355']),
+  brand('Superior', 4.5, ['media', 'caguama940']),
+  brand('Carta Blanca', 4.5, ['media', 'caguama940', 'mega1200']),
+  brand('Bohemia Clara', 4.7, ['botella355', 'laton473']),
+  brand('Bohemia Oscura', 5.3, ['botella355']),
+  brand('Heineken', 5.0, ['botella355', 'lata355', 'laton473']),
+  brand('Heineken 0.0', 0, ['botella355', 'lata355']),
+  brand('Amstel Ultra', 3.5, ['botella355', 'lata355', 'laton473']),
 ];
+
+export function presentationLabel(p) {
+  const short = p.short[0].toUpperCase() + p.short.slice(1);
+  const vol = p.ml >= 1000 ? `${p.ml / 1000} L` : `${p.ml} ml`;
+  return p.units > 1 ? `${short} ${vol} · ${p.units} pack` : `${short} ${vol}`;
+}

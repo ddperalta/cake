@@ -184,6 +184,76 @@ button.ghost.danger:hover {
   border-color: var(--red);
 }
 
+.catalog {
+  margin-bottom: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.catalog summary {
+  padding: 0.55rem 0.65rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.catalog summary:hover {
+  color: var(--amber);
+}
+
+.catalog input[type='search'] {
+  width: calc(100% - 1.3rem);
+  margin: 0 0.65rem 0.5rem;
+}
+
+.catalog-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0.65rem 0.55rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.catalog-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.4rem 0.2rem;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  text-align: left;
+}
+
+.catalog-brand:hover,
+.catalog-brand.open {
+  color: var(--amber);
+}
+
+.catalog-abv {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.catalog-caret {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+}
+
+.catalog-pres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem 0.2rem 0.7rem;
+  border-bottom: 1px solid var(--border);
+}
+
 .geo-row {
   display: flex;
   align-items: center;

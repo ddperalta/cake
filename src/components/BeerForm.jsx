@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { CONTAINERS, ML_PRESETS, computeEntry, fmtMoney, fmtPerMl, fmtMl } from '../lib/calc.js';
-import { CATALOG } from '../lib/catalog.js';
+import CatalogPicker from './CatalogPicker.jsx';
 
 const INITIAL = {
   name: '',
@@ -30,18 +30,15 @@ export default function BeerForm({ onAdd }) {
     ? computeEntry({ mlPerUnit, units, price, priceMode: form.priceMode, abv })
     : null;
 
-  function pickFromCatalog(e) {
-    const item = CATALOG[e.target.value];
-    if (!item) return;
+  function pickFromCatalog(brandItem, presentation) {
     setForm({
       ...form,
-      name: item.name,
-      container: item.container,
-      mlPerUnit: String(item.ml),
-      units: String(item.units),
-      abv: String(item.abv),
+      name: `${brandItem.name} ${presentation.short}`,
+      container: presentation.container,
+      mlPerUnit: String(presentation.ml),
+      units: String(presentation.units),
+      abv: String(brandItem.abv),
     });
-    e.target.value = '';
   }
 
   function captureLocation() {
@@ -83,17 +80,7 @@ export default function BeerForm({ onAdd }) {
     <form className="card" onSubmit={handleSubmit}>
       <h2>Agregar cerveza</h2>
 
-      <label>
-        Catálogo rápido
-        <select defaultValue="" onChange={pickFromCatalog}>
-          <option value="">— Elegir presentación común —</option>
-          {CATALOG.map((item, i) => (
-            <option key={item.label} value={i}>
-              {item.label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <CatalogPicker onPick={pickFromCatalog} />
 
       <label>
         Marca / descripción
