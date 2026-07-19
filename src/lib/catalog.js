@@ -1,0 +1,20 @@
+// Presentaciones comunes en México. Los ABV son aproximados y editables.
+export const CATALOG = [
+  { label: 'Corona cuartito (207 ml × 6)', name: 'Corona Extra cuartito', container: 'botella', ml: 207, units: 6, abv: 4.5 },
+  { label: 'Corona media (355 ml × 6)', name: 'Corona Extra media', container: 'botella', ml: 355, units: 6, abv: 4.5 },
+  { label: 'Corona Familiar caguama (940 ml)', name: 'Corona Familiar', container: 'caguama', ml: 940, units: 1, abv: 4.5 },
+  { label: 'Victoria media (355 ml × 6)', name: 'Victoria media', container: 'botella', ml: 355, units: 6, abv: 4 },
+  { label: 'Victoria caguama (940 ml)', name: 'Victoria caguama', container: 'caguama', ml: 940, units: 1, abv: 4 },
+  { label: 'Victoria mega (1.2 L)', name: 'Victoria mega', container: 'caguama', ml: 1200, units: 1, abv: 4 },
+  { label: 'Modelo Especial lata (355 ml × 6)', name: 'Modelo Especial lata', container: 'lata', ml: 355, units: 6, abv: 4.5 },
+  { label: 'Modelo Especial latón (473 ml)', name: 'Modelo Especial latón', container: 'lata-alta', ml: 473, units: 1, abv: 4.5 },
+  { label: 'Pacífico media (355 ml × 6)', name: 'Pacífico media', container: 'botella', ml: 355, units: 6, abv: 4.5 },
+  { label: 'Pacífico ballena (940 ml)', name: 'Pacífico ballena', container: 'caguama', ml: 940, units: 1, abv: 4.5 },
+  { label: 'Indio latón (473 ml × 6)', name: 'Indio latón', container: 'lata-alta', ml: 473, units: 6, abv: 4.1 },
+  { label: 'Indio caguama (940 ml)', name: 'Indio caguama', container: 'caguama', ml: 940, units: 1, abv: 4.1 },
+  { label: 'Tecate lata (355 ml × 6)', name: 'Tecate lata', container: 'lata', ml: 355, units: 6, abv: 4.5 },
+  { label: 'Tecate Light latón (473 ml)', name: 'Tecate Light latón', container: 'lata-alta', ml: 473, units: 1, abv: 3.9 },
+  { label: 'XX Lager lata (355 ml × 6)', name: 'XX Lager lata', container: 'lata', ml: 355, units: 6, abv: 4.2 },
+  { label: 'Heineken latón (473 ml)', name: 'Heineken latón', container: 'lata-alta', ml: 473, units: 1, abv: 5 },
+  { label: 'Bohemia Clara media (355 ml × 6)', name: 'Bohemia Clara', container: 'botella', ml: 355, units: 6, abv: 4.7 },
+];

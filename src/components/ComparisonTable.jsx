@@ -1,6 +1,16 @@
-import { computeEntry, containerLabel, fmtMoney, fmtPerMl, fmtMl } from '../lib/calc.js';
+import { useState } from 'react';
+import { computeEntry, containerLabel, fmtMoney, fmtPerMl, fmtMl, mapsUrl } from '../lib/calc.js';
+import { shareUrl } from '../lib/share.js';
+
+const METRICS = {
+  perLiter: { label: '$ / litro', unit: 'por litro' },
+  perLiterAlcohol: { label: '$ / L de alcohol', unit: 'por litro de alcohol' },
+};
 
 export default function ComparisonTable({ entries, onRemove, onClear }) {
+  const [metric, setMetric] = useState('perLiter');
+  const [shared, setShared] = useState(false);
+
   if (entries.length === 0) {
     return (
       <div className="card empty">
@@ -10,19 +20,54 @@ export default function ComparisonTable({ entries, onRemove, onClear }) {
     );
   }
 
+  const sortVal = (r) => (r[metric] == null ? Infinity : r[metric]);
   const rows = entries
     .map((e) => ({ ...e, ...computeEntry(e) }))
-    .sort((a, b) => a.perLiter - b.perLiter);
+    .sort((a, b) => sortVal(a) - sortVal(b));
 
   const best = rows[0];
+  const ranked = rows.filter((r) => r[metric] != null);
+  const worst = ranked[ranked.length - 1];
+
+  async function handleShare() {
+    const url = shareUrl(entries);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Comparativo de cervezas 🍺', url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShared(true);
+        setTimeout(() => setShared(false), 2000);
+      }
+    } catch {
+      // compartir cancelado por el usuario
+    }
+  }
 
   return (
     <div className="card">
       <div className="table-head">
         <h2>Comparativo</h2>
-        <button type="button" className="ghost" onClick={onClear}>
-          Limpiar todo
-        </button>
+        <div className="table-actions">
+          <div className="toggle" role="group" aria-label="Ordenar por">
+            {Object.entries(METRICS).map(([key, m]) => (
+              <button
+                key={key}
+                type="button"
+                className={metric === key ? 'toggle-btn active' : 'toggle-btn'}
+                onClick={() => setMetric(key)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <button type="button" className="ghost" onClick={handleShare}>
+            {shared ? '✓ Enlace copiado' : '🔗 Compartir'}
+          </button>
+          <button type="button" className="ghost" onClick={onClear}>
+            Limpiar todo
+          </button>
+        </div>
       </div>
 
       <div className="table-scroll">
@@ -30,24 +75,45 @@ export default function ComparisonTable({ entries, onRemove, onClear }) {
           <thead>
             <tr>
               <th>Cerveza</th>
+              <th>Tienda</th>
               <th>Presentación</th>
               <th>Volumen</th>
               <th>Precio</th>
-              <th>$/L</th>
-              <th>$/ml</th>
-              <th>vs. mejor</th>
+              <th className="num">$/L</th>
+              <th className="num">$/ml</th>
+              <th className="num">$/L alc.</th>
+              <th className="num">vs. mejor</th>
               <th aria-label="Acciones"></th>
             </tr>
           </thead>
           <tbody>
             {rows.map((r) => {
-              const isBest = r.id === best.id;
-              const diff = ((r.perLiter - best.perLiter) / best.perLiter) * 100;
+              const isBest = r.id === best.id && r[metric] != null;
+              const diff =
+                r[metric] == null
+                  ? null
+                  : ((r[metric] - best[metric]) / best[metric]) * 100;
               return (
                 <tr key={r.id} className={isBest ? 'best' : ''}>
                   <td>
                     {isBest && <span title="Mejor precio">🏆 </span>}
                     {r.name}
+                  </td>
+                  <td>
+                    {r.store || '—'}
+                    {r.location && (
+                      <>
+                        {' '}
+                        <a
+                          href={mapsUrl(r.location)}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="Ver en Google Maps"
+                        >
+                          📍
+                        </a>
+                      </>
+                    )}
                   </td>
                   <td>
                     {containerLabel(r.container)} × {r.units} de {r.mlPerUnit} ml
@@ -57,7 +123,10 @@ export default function ComparisonTable({ entries, onRemove, onClear }) {
                   <td className="num">{fmtMoney(r.perLiter)}</td>
                   <td className="num">{fmtPerMl(r.perMl)}</td>
                   <td className="num">
-                    {isBest ? '—' : `+${diff.toFixed(1)}%`}
+                    {r.perLiterAlcohol == null ? '—' : fmtMoney(r.perLiterAlcohol)}
+                  </td>
+                  <td className="num">
+                    {diff == null ? '—' : isBest ? '—' : `+${diff.toFixed(1)}%`}
                   </td>
                   <td>
                     <button
@@ -76,14 +145,17 @@ export default function ComparisonTable({ entries, onRemove, onClear }) {
         </table>
       </div>
 
-      {rows.length > 1 && (
+      {ranked.length > 1 && (
         <p className="verdict">
-          🏆 <strong>{best.name}</strong> es la más barata: {fmtMoney(best.perLiter)} por litro.
-          La más cara sale{' '}
-          <strong>
-            +{(((rows[rows.length - 1].perLiter - best.perLiter) / best.perLiter) * 100).toFixed(1)}%
-          </strong>{' '}
+          🏆 <strong>{best.name}</strong> es la más barata: {fmtMoney(best[metric])}{' '}
+          {METRICS[metric].unit}. La más cara sale{' '}
+          <strong>+{(((worst[metric] - best[metric]) / best[metric]) * 100).toFixed(1)}%</strong>{' '}
           más.
+        </p>
+      )}
+      {metric === 'perLiterAlcohol' && rows.some((r) => r.perLiterAlcohol == null) && (
+        <p className="hint">
+          Las cervezas sin % de alcohol capturado no participan en este orden.
         </p>
       )}
     </div>

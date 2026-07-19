@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CONTAINERS, ML_PRESETS, computeEntry, fmtMoney, fmtPerMl, fmtMl } from '../lib/calc.js';
+import { CATALOG } from '../lib/catalog.js';
 
 const INITIAL = {
   name: '',
@@ -8,21 +9,56 @@ const INITIAL = {
   units: '6',
   price: '',
   priceMode: 'total',
+  abv: '',
+  store: '',
 };
 
 export default function BeerForm({ onAdd }) {
   const [form, setForm] = useState(INITIAL);
+  const [location, setLocation] = useState(null);
+  const [geoStatus, setGeoStatus] = useState('idle'); // idle | loading | error
 
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
   const mlPerUnit = parseFloat(form.mlPerUnit);
   const units = parseInt(form.units, 10);
   const price = parseFloat(form.price);
+  const abv = parseFloat(form.abv);
   const valid = mlPerUnit > 0 && units > 0 && price > 0;
 
   const preview = valid
-    ? computeEntry({ mlPerUnit, units, price, priceMode: form.priceMode })
+    ? computeEntry({ mlPerUnit, units, price, priceMode: form.priceMode, abv })
     : null;
+
+  function pickFromCatalog(e) {
+    const item = CATALOG[e.target.value];
+    if (!item) return;
+    setForm({
+      ...form,
+      name: item.name,
+      container: item.container,
+      mlPerUnit: String(item.ml),
+      units: String(item.units),
+      abv: String(item.abv),
+    });
+    e.target.value = '';
+  }
+
+  function captureLocation() {
+    if (!navigator.geolocation) {
+      setGeoStatus('error');
+      return;
+    }
+    setGeoStatus('loading');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setGeoStatus('idle');
+      },
+      () => setGeoStatus('error'),
+      { enableHighAccuracy: false, timeout: 10000 }
+    );
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -35,13 +71,29 @@ export default function BeerForm({ onAdd }) {
       units,
       price,
       priceMode: form.priceMode,
+      abv: abv > 0 ? abv : null,
+      store: form.store.trim(),
+      location,
     });
-    setForm({ ...form, name: '', price: '' });
+    // Se conservan tienda y ubicación para capturar varias cervezas del mismo lugar
+    setForm({ ...form, name: '', price: '', abv: '' });
   }
 
   return (
     <form className="card" onSubmit={handleSubmit}>
       <h2>Agregar cerveza</h2>
+
+      <label>
+        Catálogo rápido
+        <select defaultValue="" onChange={pickFromCatalog}>
+          <option value="">— Elegir presentación común —</option>
+          {CATALOG.map((item, i) => (
+            <option key={item.label} value={i}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+      </label>
 
       <label>
         Marca / descripción
@@ -128,6 +180,55 @@ export default function BeerForm({ onAdd }) {
         </label>
       </div>
 
+      <div className="row">
+        <label>
+          Alcohol % (opcional)
+          <input
+            type="number"
+            min="0"
+            max="70"
+            step="any"
+            inputMode="decimal"
+            placeholder="Ej. 4.5"
+            value={form.abv}
+            onChange={set('abv')}
+          />
+        </label>
+
+        <label>
+          Tienda (opcional)
+          <input
+            type="text"
+            placeholder="Ej. OXXO Centro"
+            value={form.store}
+            onChange={set('store')}
+          />
+        </label>
+      </div>
+
+      <div className="geo-row">
+        {location ? (
+          <>
+            <span className="geo-ok">📍 Ubicación guardada</span>
+            <button type="button" className="ghost" onClick={() => setLocation(null)}>
+              Quitar
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="ghost"
+            onClick={captureLocation}
+            disabled={geoStatus === 'loading'}
+          >
+            {geoStatus === 'loading' ? 'Obteniendo ubicación…' : '📍 Agregar mi ubicación'}
+          </button>
+        )}
+        {geoStatus === 'error' && (
+          <span className="geo-error">No se pudo obtener la ubicación</span>
+        )}
+      </div>
+
       {preview && (
         <div className="preview">
           <div>
@@ -136,6 +237,9 @@ export default function BeerForm({ onAdd }) {
           <div className="preview-sub">
             {fmtMoney(preview.perLiter)} por litro · {fmtMl(preview.totalMl)} en total ·{' '}
             {fmtMoney(preview.totalPrice)}
+            {preview.perLiterAlcohol && (
+              <> · {fmtMoney(preview.perLiterAlcohol)} por litro de alcohol</>
+            )}
           </div>
         </div>
       )}

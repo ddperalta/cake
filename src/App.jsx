@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 import BeerForm from './components/BeerForm.jsx';
 import ComparisonTable from './components/ComparisonTable.jsx';
+import { entriesFromUrl } from './lib/share.js';
 
 const STORAGE_KEY = 'cheve-calc:entries';
 
 function loadEntries() {
+  // Un enlace compartido (?c=...) tiene prioridad sobre lo guardado localmente
+  const shared = entriesFromUrl();
+  if (shared) {
+    window.history.replaceState(null, '', window.location.pathname);
+    return shared;
+  }
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];

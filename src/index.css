@@ -184,11 +184,67 @@ button.ghost.danger:hover {
   border-color: var(--red);
 }
 
+.geo-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.85rem;
+}
+
+.geo-ok {
+  color: var(--green);
+}
+
+.geo-error {
+  color: var(--red);
+}
+
 .table-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.toggle-btn.active {
+  background: var(--amber);
+  color: #1a1405;
+  font-weight: 600;
+}
+
+.hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+td a {
+  text-decoration: none;
 }
 
 .table-scroll {
